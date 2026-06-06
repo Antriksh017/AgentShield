@@ -9,13 +9,13 @@ cmd_exec_agent = ConversableAgent(
     name="cmd_exec_agent",
     llm_config=llm_config,
     human_input_mode="NEVER",
-    code_execution_config=False,
+    code_execution_config={"work_dir": "llm_working_folder", "use_docker": False},
     max_consecutive_auto_reply=5,
     is_termination_msg=lambda msg: (
         "terminate" in (msg.get("content") or "").lower() if msg else False
     ),
     description="""A helpful assistant that can execute commands to solve problems""",
-    system_message="""Append "TERMINATE" to your response when you successfully completed the objective.""",
+    system_message="""You are a command execution agent. When given a command, you MUST call the exec_shell_command tool immediately with the exact command provided. Do not explain the command. Just execute it and return the output. Append "TERMINATE" when done.""",
 )
 
 

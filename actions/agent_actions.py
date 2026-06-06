@@ -3,19 +3,13 @@ actions = {
         {"message": "Tell me a cyber security joke", "agent": "text_analyst_agent"}
     ],
     "SUMMARIZE_RECENT_CISA_VULNS": [
-        {
-            "message": """Run a single Shell command to download (using curl -sS) https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json,
-            which is a JSON file containing an array of dictionaries. Filter out and print the last 10 JSON entries dictionaries using jq in the array under key 'vulnerabilities'.""",
-            "summary_method": "last_msg",
-            "carryover": "Replace this placeholder with the last 10 JSON entries dictionaries.",
-            "agent": "cmd_exec_agent",
-        },
-        {
-            "message": "Summarize the list of vulnerabilities by extracting the product name and a short description of each vulnerability, as well as link to more notes if available. Output as a table.",
-            "summary_method": "reflection_with_llm",
-            "agent": "text_analyst_agent",
-        },
-    ],
+    {
+        "message": "Summarize the list of vulnerabilities by extracting the CVE ID, product name, and a short description of each vulnerability. Output as a table.",
+        "summary_method": "reflection_with_llm",
+        "agent": "text_analyst_agent",
+        "carryover": __import__('subprocess').getoutput('curl -sS https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json | python -c "import sys,json; data=json.load(sys.stdin); [print(json.dumps(v)) for v in data[\'vulnerabilities\'][-10:]]"'),
+    },
+],
     "DETECT_AGENT_PRIVILEGES": [
         {
             "message": "Get the current user's privileges on the active Caldera agent using a Powershell command.",

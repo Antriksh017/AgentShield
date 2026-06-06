@@ -6,8 +6,13 @@ import os
 script_folder = os.path.dirname(os.path.abspath(__file__))
 working_folder = os.path.join(script_folder, "../" + utils.constants.LLM_WORKING_FOLDER)
 llm_config = {
-    "model": utils.constants.OPENAI_MODEL_NAME,
-    "api_key": utils.constants.OPENAI_API_KEY,
+    "config_list": [
+        {
+            "model": "qwen3:latest",
+            "base_url": "http://localhost:11434/v1",
+            "api_key": "ollama",
+        }
+    ],
     "cache_seed": None,
 }
 
