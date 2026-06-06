@@ -1,127 +1,137 @@
-# cyber-security-llm-agents
-A collection of agents that use Large Language Models (LLMs) to perform tasks common on our day to day jobs in cyber security.
-Built on top of [AutoGen](https://microsoft.github.io/autogen/).
+# 🛡️ AgentShield
 
-Released as part of our talks at RSAC2024:  
-[From Chatbot to Destroyer of Endpoints: Can ChatGPT Automate EDR Bypasses?](https://www.rsaconference.com/USA/agenda/session/From%20Chatbot%20to%20Destroyer%20of%20Endpoints%20Can%20ChatGPT%20Automate%20EDR%20Bypasses)  
-[The Always-On Purple Team: An Automated CI/CD for Detection Engineering](https://www.rsaconference.com/USA/agenda/session/The%20Always-On%20Purple%20Team%20An%20Automated%20CICD%20for%20Detection%20Engineering)
+> Multi-agent AI framework for automated cyber threat intelligence using local LLMs — no API key required.
 
-<figure align="center">
-  <img src="documentation/videos/detect_edr.gif" alt="Detecting EDR"/>
-   <figcaption style="text-align: center;"><i>Detecting the EDR running on a Windows system based on live data extracted from https://github.com/tsale/EDR-Telemetry.</i></figcaption>
-</figure>
+Built by **Antriksh Gupta** | [LinkedIn](https://linkedin.com/in/antriksh-gupta-39a69b222) | [TryHackMe](https://tryhackme.com/p/AntrikshGupta) | [GitHub](https://github.com/Antriksh017)
 
-## Key Features
+---
 
-- **Modular Design**: Our framework is composed of individual agents and tasks that can be combined and customized to fit your specific security needs. This modular approach ensures flexibility and scalability, allowing you to adapt to the ever-evolving landscape of cyber threats.
-- **Automation**: With Cyber-Security-LLM-Agents, you can automate repetitive and complex tasks, freeing up valuable time for your security team to focus on strategic analysis and decision-making.
-- **Batteries Included**: We provide a comprehensive set of pre-defined workflows, agents, and tasks that are ready to use out-of-the-box. This enables you to jumpstart your cyber security automation with proven practices and techniques.
+## 📌 What is AgentShield?
 
-## Getting Started
+AgentShield is a cybersecurity automation framework powered by multiple AI agents that collaborate to perform real-world security tasks — fetching live threat intelligence, analyzing vulnerabilities, and generating professional HTML reports automatically.
 
-> [!CAUTION]
-> Running LLM-generated source code and commands poses a security risk to your host environment! Be careful and only run this in a virtual or test environment.
+Originally inspired by [NVISOsecurity/cyber-security-llm-agents](https://github.com/NVISOsecurity/cyber-security-llm-agents), AgentShield is a heavily modified and improved fork that:
 
-### Step 1 - Install  requirements
+- Runs **completely offline** using [Ollama](https://ollama.com) (Qwen3) — no OpenAI API key needed
+- Fetches **live CISA KEV data** in real time
+- Automatically generates **dark-themed HTML reports** after every scenario
+- Uses **Microsoft AutoGen** for multi-agent orchestration
+
+---
+
+## 🧠 How It Works
 
 ```
-pip install -r requirements
+You run:  python run_agents.py <SCENARIO>
+                    ↓
+    Task Coordinator Agent receives the scenario
+                    ↓
+         Delegates to specialized agents:
+    - text_analyst_agent  → analyzes and summarizes data
+    - cmd_exec_agent      → executes system commands
+    - internet_agent      → fetches web data
+    - caldera_agent       → runs attack simulations
+                    ↓
+    Agents collaborate and pass results to each other
+                    ↓
+    HTML report auto-saved to /reports folder
 ```
 
-### Step 2 - Configure OpenAI API Information
+---
 
-```
+## ⚡ Key Features
+
+- 🤖 **Multi-Agent Architecture** — agents talk to each other using AutoGen
+- 🌐 **Live Threat Intelligence** — fetches real CISA Known Exploited Vulnerabilities
+- 📄 **Auto HTML Reports** — professional dark-themed reports saved automatically
+- 🔒 **Fully Local** — powered by Ollama Qwen3, no cloud API needed
+- 🧩 **Modular Scenarios** — easily add new scenarios in one file
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology | Role |
+|---|---|
+| Python 3.12 | Core language |
+| Microsoft AutoGen 0.2.34 | Multi-agent framework |
+| Ollama + Qwen3 | Local LLM (no API key) |
+| CISA KEV Feed | Live vulnerability data source |
+| HTML/CSS | Report generation |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.12
+- [Ollama](https://ollama.com) installed and running
+- Qwen3 model pulled: `ollama pull qwen3`
+
+### Setup
+
+```bash
+# Clone the repo
+git clone https://github.com/Antriksh017/AgentShield.git
+cd AgentShield
+
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Copy env template
 cp .env_template .env
 ```
-Then add your LLM API information and other parameters to the ``.env``.
 
+### Run a Scenario
 
-### Step 3 - Start HTTP and FTP server (Optional)
-
-Only required if you want to host a simple HTTP and FTP server to interact with using your agents.
-This is useful for demos, where you might want to showcase exfiltration or downloading of payloads onto an implant.
-
-```
-python run_servers.py
+```bash
+python run_agents.py SUMMARIZE_RECENT_CISA_VULNS
 ```
 
+---
 
-### Step 3 - Hello, Agents
+## 📋 Available Scenarios
 
-Run a very basic scenario to confirm everything is configured correctly.
+| Scenario | Description |
+|---|---|
+| `HELLO_AGENTS` | Basic test to verify setup |
+| `SUMMARIZE_RECENT_CISA_VULNS` | Fetch and summarize latest CISA vulnerabilities |
+| `DETECT_EDR` | Detect EDR products on a target system |
+| `IDENTIFY_EDR_BYPASS_TECHNIQUES` | Find EDR telemetry gaps |
+| `TTP_REPORT_TO_TECHNIQUES` | Extract MITRE techniques from threat reports |
 
-```
-python run_agents.py HELLO_AGENTS
-```
+---
 
-The output should show the agent doing its best at being funny.
-If you see the below (or an even better) joke, you are all set!
-
-```
-python run_agents.py HELLO_AGENTS
-
-********************************************************************************
-Starting a new chat....
-
-********************************************************************************
-task_coordinator_agent (to text_analyst_agent):
-
-Tell me a cyber security joke
-
---------------------------------------------------------------------------------
-text_analyst_agent (to task_coordinator_agent):
-
-Why was the computer cold? It left its Windows open. 
-
-TERMINATE
-```
-
-## Building Scenarios
-
-All scenarios are defined in ``actions/agent_actions.py``. You can use that file to modify and create new scenarios. Once a new scenario has been added to the dictionary, you can run it:
+## 📁 Project Structure
 
 ```
-python run_agents.py <scenario-name>
+AgentShield/
+├── actions/          # Scenario definitions
+├── agents/           # Agent configurations
+├── tools/            # Tool implementations
+├── utils/            # Shared utilities + report generator
+├── reports/          # Auto-generated HTML reports
+├── notebooks/        # Jupyter notebooks for demos
+└── run_agents.py     # Main entry point
 ```
 
+---
 
-## Development
+## ⚠️ Disclaimer
 
+This tool is intended for **educational and authorized security research purposes only**. Always run in an isolated/virtual environment. The author is not responsible for any misuse.
 
-### Jupyter notebooks
+---
 
-You can launch jupyter notebooks on your network interface by choice. This allows you run the notebooks within a VM and expose them to different system - interesting for demos!
+## 📜 License
 
-```
-./run_notebooks.sh ens37
-```
+GPL-3.0
 
-### Static analysis and code quality
+---
 
-We ignore E501 (line too long) as this triggers on long agent and action strings.
-We ignore W503 (line break before binary operator) and we are opinionated about this being OK.
-
-```
-flake8 --exclude=.venv --ignore=E501,W503 .
-```
-
-## Conributions
-
-We welcome contributions from the community! 
-
-If you have ideas for new agents, tasks, or improvements, please feel free to fork our repository, make your changes, and submit a pull request.
-
-## License
-
-Released under the GNU GENERAL PUBLIC LICENSE v3 (GPL-3).
-
-## Disclaimer
-
-Please note that the software contained in this repository is in its early stages of development. As such, it is considered to be an early release and may contain components that are not fully stable, potentially leading to breaking changes. Users should exercise caution when using this software. 
-
-We are committed to improving and extending the software's capabilities over the coming months, and we welcome any feedback that can help us enhance its performance and functionality.
-
-## Acknowledgements
-We are grateful for the support received by 
-[INNOVIRIS](https://innoviris.brussels/) and the Brussels region in 
-funding our Research & Development activities. 
+<p align="center">Made with 🛡️ by Antriksh Gupta</p>
